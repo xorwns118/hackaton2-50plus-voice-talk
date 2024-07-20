@@ -9,5 +9,5 @@ import lombok.ToString;
 @ToString
 public class UserRequest {
     private String username;
-
+    private String password;
 }
