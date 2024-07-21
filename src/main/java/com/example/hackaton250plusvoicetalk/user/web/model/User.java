@@ -13,4 +13,8 @@ public class User {
     private Long id;
     private String username;
     private String password;
+    private String mobileNumber;
+    private String birthDate;
+    private String province;
+    private String city;
 }

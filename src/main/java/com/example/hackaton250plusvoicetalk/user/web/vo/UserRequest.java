@@ -10,4 +10,8 @@ import lombok.ToString;
 public class UserRequest {
     private String username;
     private String password;
+    private String mobileNumber;
+    private String birthDate;
+    private String province;
+    private String city;
 }
