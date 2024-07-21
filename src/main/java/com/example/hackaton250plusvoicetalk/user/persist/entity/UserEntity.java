@@ -1,13 +1,17 @@
 package com.example.hackaton250plusvoicetalk.user.persist.entity;
 
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.example.hackaton250plusvoicetalk.constants.Authority;
+import com.example.hackaton250plusvoicetalk.constants.Gender;
+import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+
+import java.util.Collection;
+import java.util.Collections;
 
 @Getter
 @Setter
@@ -16,14 +20,34 @@ import org.hibernate.annotations.DynamicUpdate;
 @Data
 @DynamicInsert
 @DynamicUpdate
-@Entity(name = "USER")
+@Entity(name = "USERS")
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(name="user_id")
+    private Long userId;
 
     private String username;
     private String password;
+
+    @Column(name="mobile_number")
+    private String mobileNumber;
+
+    @Column(name="birth_date")
+    private String birthDate;
+
+    @Enumerated(EnumType.ORDINAL)   // 0 : man, 1 : woman
+    private Gender gender;
+
+    @Enumerated(EnumType.ORDINAL)   // 0 : admin, 1 : user
+    private Authority authority;
+
+    private String province;
+    private String city;
+
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return Collections.singletonList(new SimpleGrantedAuthority(String.valueOf(this.authority)));
+    }
 }
