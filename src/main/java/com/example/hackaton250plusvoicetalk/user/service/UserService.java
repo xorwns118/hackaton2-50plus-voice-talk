@@ -15,13 +15,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.SessionAttributes;
-
-import java.util.Optional;
 
 /**
  * The type User service.
@@ -88,26 +83,131 @@ public class UserService {
 
         UserEntity userInfoEntity = getUserDetailsByMobileNumber(loginMobileNumber);
         Api<UserLoginRequest> response;
+        HttpSession session = httpServletRequest.getSession();
+        Object loginUserId = session.getAttribute(SessionConst.LOGIN_USER);
+        Object loginAdminId = session.getAttribute(SessionConst.LOGIN_ADMIN);
+
+
+        if(loginUserId != null && loginUserId.equals(userInfoEntity.getUserId())){  // session doesn't have logined user
+            return Api.<UserLoginRequest>builder()
+                    .resultCode(String.valueOf(HttpStatus.IM_USED.value()))
+                    .resultMessage(HttpStatus.IM_USED.getReasonPhrase())
+                    .data(body)
+                    .build();
+        }else if(loginAdminId != null && loginAdminId.equals(userInfoEntity.getUserId())){
+            return Api.<UserLoginRequest>builder()
+                    .resultCode(String.valueOf(HttpStatus.IM_USED.value()))
+                    .resultMessage(HttpStatus.IM_USED.getReasonPhrase())
+                    .data(body)
+                    .build();
+        }
 
         if(userInfoEntity != null && bCryptPasswordEncoder.matches(loginPassword, userInfoEntity.getPassword())){   // login success
-            HttpSession session = httpServletRequest.getSession();
             // TODO: Authority에 따른 리다이렉트 페이지 다르게 연결
             if(body.getAuthority().equals(Authority.ROLE_USER)){
-                session.setAttribute(SessionConst.LOGIN_USER, loginMobileNumber);
+                session.setAttribute(SessionConst.LOGIN_USER, userInfoEntity.getUserId());
             }else{
-                session.setAttribute(SessionConst.LOGIN_ADMIN, loginMobileNumber);
+                session.setAttribute(SessionConst.LOGIN_ADMIN, userInfoEntity.getUserId());
             }
             response = Api.<UserLoginRequest>builder()
                     .resultCode(String.valueOf(HttpStatus.OK.value()))
                     .resultMessage(HttpStatus.OK.getReasonPhrase())
                     .data(body)
                     .build();
-        }else{                                                                                  // login failure
+        }else{                                                                                                      // login failure
             log.info("wrong password");
             response = Api.<UserLoginRequest>builder()
                     .resultCode(String.valueOf(HttpStatus.NOT_FOUND.value()))
                     .resultMessage(HttpStatus.NOT_FOUND.getReasonPhrase())
                     .data(body)
+                    .build();
+        }
+        return response;
+    }
+
+
+    /**
+     * Get user api.
+     *
+     * @param userId             the user id who want to get user info
+     * @param httpServletRequest the http servlet request
+     * @return the user info about user id
+     */
+    public Api<UserEntity> getUser(Long userId, HttpServletRequest httpServletRequest){
+        UserEntity userInfoEntity = getUserDetailsByUserId(userId);
+        Api<UserEntity> response;
+        HttpSession httpSession = httpServletRequest.getSession();
+
+        if(httpSession.getAttribute(SessionConst.LOGIN_USER).equals(userId)){   // TODO: LOGIN_ADMIN 처리 안됨
+            response = Api.<UserEntity>builder()
+                    .resultCode(String.valueOf(HttpStatus.OK.value()))
+                    .resultMessage(HttpStatus.OK.getReasonPhrase())
+                    .data(userInfoEntity)
+                    .build();
+        }else{
+            log.info("not found user");
+            response = Api.<UserEntity>builder()
+                    .resultMessage(String.valueOf(HttpStatus.NOT_FOUND.value()))
+                    .resultMessage(HttpStatus.NOT_FOUND.getReasonPhrase())
+                    .data(null)
+                    .build();
+        }
+
+        return response;
+    }
+
+    /**
+     * Update user api.
+     *
+     * @param userId             the user id who wants to update user info
+     * @param userRequest        the user request for update
+     * @param httpServletRequest the http servlet request
+     * @param isPassword         the is password if only want to change password
+     * @return edited user info and result code, message
+     */
+    public Api<UserEntity> updateUser(Long userId, Api<UserRequest> userRequest, HttpServletRequest httpServletRequest, Boolean isPassword){
+        Api<UserEntity> response;
+        var body = userRequest.getData();
+        HttpSession httpSession = httpServletRequest.getSession();
+        String encodedPassword;
+
+        if(isPassword){
+            // Update password
+            encodedPassword = bCryptPasswordEncoder.encode(userRequest.getData().getPassword());
+            userRequest.getData().setPassword(encodedPassword);
+        }else{
+            encodedPassword = bCryptPasswordEncoder.encode(body.getPassword());
+        }
+
+        if(httpSession.getAttribute(SessionConst.LOGIN_USER).equals(userId)){   // TODO: LOGIN_ADMIN 처리 안됨
+
+            UserEntity userEntity = UserEntity.builder()
+                    .userId(userId)
+                    .username(body.getUsername())
+                    .password(encodedPassword)
+                    .mobileNumber(body.getMobileNumber())
+                    .birthDate(body.getBirthDate())
+                    .gender(body.getGender())
+                    .authority(Authority.ROLE_USER)
+                    .province(body.getProvince())
+                    .city(body.getCity())
+                    .build();
+
+            userRepository.save(userEntity);
+
+
+
+            response = Api.<UserEntity>builder()
+                    .resultCode(String.valueOf(HttpStatus.OK.value()))
+                    .resultMessage(HttpStatus.OK.getReasonPhrase())
+                    .data(toEntity(userRequest.getData(), userId))
+                    .build();
+        }else{
+            log.info("not found user");
+            response = Api.<UserEntity>builder()
+                    .resultMessage(String.valueOf(HttpStatus.NOT_FOUND.value()))
+                    .resultMessage(HttpStatus.NOT_FOUND.getReasonPhrase())
+                    .data(null)
                     .build();
         }
         return response;
@@ -124,4 +224,37 @@ public class UserService {
         return userRepository.findByMobileNumber(mobileNumber)
                 .orElseThrow(() -> new IllegalArgumentException("User not found with mobile number: " + mobileNumber));
     }
+
+    /**
+     * Get user details by user id user entity.
+     *
+     * @param userId the user id
+     * @return the user entity
+     */
+    public UserEntity getUserDetailsByUserId(Long userId){
+        return userRepository.findByUserId(userId)
+                .orElseThrow(() -> new IllegalArgumentException("User not found with user id: " + userId));
+    }
+
+    /**
+     * To entity user entity.
+     *
+     * @param request the request
+     * @param userId  the user id
+     * @return the user entity
+     */
+    public UserEntity toEntity(UserRequest request, Long userId) {
+        return UserEntity.builder()
+                .userId(userId)
+                .username(request.getUsername())
+                .password(request.getPassword())
+                .mobileNumber(request.getMobileNumber())
+                .birthDate(request.getBirthDate())
+                .gender(request.getGender())
+                .authority(request.getAuthority())
+                .province(request.getProvince())
+                .city(request.getCity())
+                .build();
+    }
+
 }

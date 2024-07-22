@@ -1,6 +1,8 @@
 package com.example.hackaton250plusvoicetalk.user.controller;
 
 import com.example.hackaton250plusvoicetalk.constants.Authority;
+import com.example.hackaton250plusvoicetalk.user.persist.UserRepository;
+import com.example.hackaton250plusvoicetalk.user.persist.entity.UserEntity;
 import com.example.hackaton250plusvoicetalk.user.service.UserService;
 import com.example.hackaton250plusvoicetalk.user.web.model.Api;
 import com.example.hackaton250plusvoicetalk.user.web.model.User;
@@ -27,7 +29,6 @@ import org.springframework.web.bind.annotation.*;
 @SessionAttributes("users")
 public class UserController {
     private final UserService userService;
-
 
     // ========== GET ==========
 
@@ -77,6 +78,7 @@ public class UserController {
         return "join";
     }
 
+// ========== POST ==========
 
     /**
      * Login user api.
@@ -85,7 +87,6 @@ public class UserController {
      * @param httpServletRequest the http servlet request
      * @return the api
      */
-// ========== POST ==========
     @PostMapping("/login")  // login->login.html logout->logout.html
     public Api<UserLoginRequest> loginUser(@RequestBody @Valid Api<UserLoginRequest> userLoginRequest, HttpServletRequest httpServletRequest){
         try{
@@ -118,6 +119,10 @@ public class UserController {
     public Api<UserRequest> joinUser(@RequestBody @Valid Api<UserRequest> userRequest) {
         return userService.join(userRequest);
     }
+
+
+
+
 
 
 
