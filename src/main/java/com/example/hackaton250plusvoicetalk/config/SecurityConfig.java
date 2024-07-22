@@ -12,7 +12,6 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.annotation.web.configurers.LogoutConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @EnableWebSecurity
 @EnableMethodSecurity
@@ -36,7 +35,7 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(requests ->requests
-                        .requestMatchers("/users/join", "/", "/users/login").permitAll() // all paths can be accessed
+                        .requestMatchers("/", "/users/**", "/api/**").permitAll() // all paths can be accessed
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
