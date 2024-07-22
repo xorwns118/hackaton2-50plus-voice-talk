@@ -36,11 +36,12 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(requests ->requests
-                        .requestMatchers(new AntPathRequestMatcher("/**")).permitAll()  // all paths can be accessed
+                        .requestMatchers("/users/join", "/", "/users/login").permitAll() // all paths can be accessed
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
                         .loginPage("/users/login")  // user defined login page path
+                        .loginProcessingUrl("/login")
                         .defaultSuccessUrl("/", true)
                         .permitAll()
                 )
