@@ -18,6 +18,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 /**
  * The type User service.
  */
@@ -36,35 +38,50 @@ public class UserService {
      * @return user join data and HttpStatus info
      */
     @Transactional
-    public Api<UserRequest> join(@Valid Api<UserRequest> userRequest) {
+    public Api<UserRequest> join(@Valid Api<UserRequest> userRequest) {     // TODO: 중복 데이터 체크 필요
         var body = userRequest.getData();
 
         String encryptedPassword = bCryptPasswordEncoder.encode(body.getPassword());
         body.setPassword(encryptedPassword);
+
+        // check if userRequest is admin
         if(body.getMobileNumber().equals("010-0000-0000")){ // set authority as admin
             body.setAuthority(Authority.ROLE_ADMIN);
         }else{
             body.setAuthority(Authority.ROLE_USER);
         }
 
-        UserEntity userEntity = UserEntity.builder()
-                .username(body.getUsername())
-                .password(body.getPassword())
-                .mobileNumber(body.getMobileNumber())
-                .birthDate(body.getBirthDate())
-                .gender(body.getGender())
-                .authority(Authority.ROLE_USER)
-                .province(body.getProvince())
-                .city(body.getCity())
-                .build();
+        Api<UserRequest> response;
+        // check if userRequest's mobileNumber already exists in DB
+        if(getUserDetailsByMobileNumber(body.getMobileNumber()).isPresent()){ // user already exists
+            response = Api.<UserRequest>builder()
+                    .resultCode(String.valueOf(HttpStatus.ALREADY_REPORTED.value()))
+                    .resultMessage(HttpStatus.ALREADY_REPORTED.getReasonPhrase())
+                    .data(null)
+                    .build();
+        }else{
+            UserEntity userEntity = UserEntity.builder()
+                    .username(body.getUsername())
+                    .password(body.getPassword())
+                    .mobileNumber(body.getMobileNumber())
+                    .birthDate(body.getBirthDate())
+                    .gender(body.getGender())
+                    .authority(Authority.ROLE_USER)
+                    .province(body.getProvince())
+                    .city(body.getCity())
+                    .build();
 
-        userRepository.save(userEntity);
+            userRepository.save(userEntity);
 
-        Api<UserRequest> response = Api.<UserRequest>builder()
-                .resultCode(String.valueOf(HttpStatus.OK.value()))
-                .resultMessage(HttpStatus.OK.getReasonPhrase())
-                .data(body)
-                .build();
+            response = Api.<UserRequest>builder()
+                    .resultCode(String.valueOf(HttpStatus.OK.value()))
+                    .resultMessage(HttpStatus.OK.getReasonPhrase())
+                    .data(body)
+                    .build();
+
+        }
+
+
         return response;
     }
 
@@ -81,7 +98,7 @@ public class UserService {
         String loginMobileNumber = body.getMobileNumber();
         String loginPassword = body.getPassword();
 
-        UserEntity userInfoEntity = getUserDetailsByMobileNumber(loginMobileNumber);
+        UserEntity userInfoEntity = getUserDetailsByMobileNumber(loginMobileNumber).orElseThrow(() -> new IllegalArgumentException("User not found"));
         Api<UserLoginRequest> response;
         HttpSession session = httpServletRequest.getSession();
         Object loginUserId = session.getAttribute(SessionConst.LOGIN_USER);
@@ -220,9 +237,9 @@ public class UserService {
      * @param mobileNumber the mobile number
      * @return the user details found by mobile number
      */
-    public UserEntity getUserDetailsByMobileNumber(String mobileNumber) {
-        return userRepository.findByMobileNumber(mobileNumber)
-                .orElseThrow(() -> new IllegalArgumentException("User not found with mobile number: " + mobileNumber));
+    public Optional<UserEntity> getUserDetailsByMobileNumber(String mobileNumber) {
+        return userRepository.findByMobileNumber(mobileNumber);
+               /* .orElseThrow(() -> new IllegalArgumentException("User not found with mobile number: " + mobileNumber));*/
     }
 
     /**

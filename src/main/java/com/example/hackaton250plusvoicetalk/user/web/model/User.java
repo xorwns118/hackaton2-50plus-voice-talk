@@ -12,7 +12,7 @@ import lombok.ToString;
 @Getter
 @Builder
 @ToString
-public class User {
+public class User { // TODO: 삭제 예정
     private Long id;
     @Column(unique = true)
     private String username;

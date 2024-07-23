@@ -20,7 +20,7 @@ import java.util.Collections;
 @Data
 @DynamicInsert
 @DynamicUpdate
-@Entity(name = "USERS")
+@Entity(name = "users")
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserEntity {

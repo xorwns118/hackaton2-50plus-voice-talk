@@ -1,11 +1,8 @@
 package com.example.hackaton250plusvoicetalk.user.controller;
 
 import com.example.hackaton250plusvoicetalk.constants.Authority;
-import com.example.hackaton250plusvoicetalk.user.persist.UserRepository;
-import com.example.hackaton250plusvoicetalk.user.persist.entity.UserEntity;
 import com.example.hackaton250plusvoicetalk.user.service.UserService;
 import com.example.hackaton250plusvoicetalk.user.web.model.Api;
-import com.example.hackaton250plusvoicetalk.user.web.model.User;
 import com.example.hackaton250plusvoicetalk.user.web.vo.UserLoginRequest;
 import com.example.hackaton250plusvoicetalk.user.web.vo.UserRequest;
 import jakarta.servlet.http.HttpServletRequest;
@@ -14,9 +11,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.support.SimpleTriggerContext;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -67,7 +61,6 @@ public class UserController {
     public String login(){
         return "login";
     }
-
     /**
      * Join string.
      *
@@ -87,7 +80,7 @@ public class UserController {
      * @param httpServletRequest the http servlet request
      * @return the api
      */
-    @PostMapping("/login")  // login->login.html logout->logout.html
+    @PostMapping("/logins")  // login->login.html logout->logout.html
     public Api<UserLoginRequest> loginUser(@RequestBody @Valid Api<UserLoginRequest> userLoginRequest, HttpServletRequest httpServletRequest){
         try{
             // check Authority by using mobile number
