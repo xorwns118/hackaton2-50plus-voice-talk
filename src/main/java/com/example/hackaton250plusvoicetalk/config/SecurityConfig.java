@@ -42,11 +42,12 @@ public class SecurityConfig {
                 .cors().and()
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(requests ->requests
-                        .requestMatchers(new AntPathRequestMatcher("/**")).permitAll()  // all paths can be accessed
+                        .requestMatchers("/**", "/users/**", "/api/**").permitAll()  // all paths can be accessed
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
                         .loginPage("/users/login")  // user defined login page path
+                        .loginProcessingUrl("/users/login")
                         .defaultSuccessUrl("/", true)
                         .permitAll()
                 )
