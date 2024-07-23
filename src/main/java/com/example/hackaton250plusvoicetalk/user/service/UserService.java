@@ -217,7 +217,7 @@ public class UserService {
             response = Api.<UserEntity>builder()
                     .resultCode(String.valueOf(HttpStatus.OK.value()))
                     .resultMessage(HttpStatus.OK.getReasonPhrase())
-                    .data(toEntity(userRequest.getData(), userId))
+                    .data(userEntity)
                     .build();
         }else{
             log.info("not found user");
