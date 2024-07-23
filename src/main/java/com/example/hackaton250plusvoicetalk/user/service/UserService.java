@@ -126,6 +126,7 @@ public class UserService {
             }else{
                 session.setAttribute(SessionConst.LOGIN_ADMIN, userInfoEntity.getUserId());
             }
+            body.setUserId(userInfoEntity.getUserId()); //user_id 리턴되도록 수정 [fix]
             response = Api.<UserLoginRequest>builder()
                     .resultCode(String.valueOf(HttpStatus.OK.value()))
                     .resultMessage(HttpStatus.OK.getReasonPhrase())

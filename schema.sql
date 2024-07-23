@@ -1,13 +1,13 @@
-DROP TABLE IF EXISTS users;
-DROP TABLE IF EXISTS interests;
-DROP TABLE IF EXISTS notifications;
 DROP TABLE IF EXISTS user_interests;
+DROP TABLE IF EXISTS notifications;
+DROP TABLE IF EXISTS interests;
+DROP TABLE IF EXISTS users;
 
 create table users
 (
     user_id       BIGINT(32)  NOT NULL AUTO_INCREMENT,
     username     VARCHAR(50) NOT NULL,
-    password      VARCHAR(8)  NOT NULL,
+    password      VARCHAR(255)  NOT NULL,
     gender        INT         NOT NULL,
     birth_date    VARCHAR(50) NOT NULL,
     authority     INT         NOT NULL,

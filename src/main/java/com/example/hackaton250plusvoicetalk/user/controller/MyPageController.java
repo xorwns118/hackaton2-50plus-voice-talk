@@ -44,14 +44,14 @@ public class MyPageController {
     @PatchMapping("/users/{user-id}")
     public Api<UserEntity> editUser(@PathVariable("user-id") Long userId, @RequestBody @Valid Api<UserRequest> userRequest,
                                     HttpServletRequest httpServletRequest){
-        return userService.updateUser(userId, userRequest, httpServletRequest, false);
+        return userService.updateUser(userId, userRequest, httpServletRequest, true);
     }
 
-    @PatchMapping("/users/{user-id}/password")
+/*    @PatchMapping("/users/{user-id}/password")
     public Api<UserEntity> editUserPassword(@PathVariable("user-id") Long userId, @RequestBody @Valid Api<UserRequest> userRequest,
                                             HttpServletRequest httpServletRequest){
         return userService.updateUser(userId, userRequest, httpServletRequest, true);
-    }
+    }*/
 
 
 }

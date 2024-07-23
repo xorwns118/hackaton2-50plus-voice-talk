@@ -23,4 +23,8 @@ public class UserLoginRequest {
 
 
     private Authority authority;
+
+    @JsonProperty("user_id") //user_id가 있어야 세션 바탕 회원 정보 가져오기가 가능
+    private Long userId;
+
 }

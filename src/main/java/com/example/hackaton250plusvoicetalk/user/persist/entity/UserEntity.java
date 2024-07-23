@@ -30,6 +30,8 @@ public class UserEntity {
     private Long userId;
 
     private String username;
+    @Lob
+    @Column(columnDefinition = "TEXT")
     private String password;
 
     @Column(name="mobile_number")
