@@ -1,9 +1,4 @@
-DROP TABLE IF EXISTS USERS;
-DROP TABLE IF EXISTS Interests;
-DROP TABLE IF EXISTS Notifications;
-DROP TABLE IF EXISTS User_Interests;
-
-create table Users
+create table users
 (
     user_id       BIGINT(32)  NOT NULL AUTO_INCREMENT,
     username     VARCHAR(50) NOT NULL,
@@ -17,14 +12,14 @@ create table Users
     PRIMARY KEY (user_id)
 );
 
-create table Interests
+create table interests
 (
     interest_id   BIGINT(32)  NOT NULL AUTO_INCREMENT,
     interest_name VARCHAR(10) NOT NULL,
     PRIMARY KEY (interest_id)
 );
 
-create table Notifications
+create table notification
 (
     notification_id BIGINT(32)   NOT NULL AUTO_INCREMENT,
     noti_message    VARCHAR(100) NULL,
@@ -32,7 +27,7 @@ create table Notifications
     PRIMARY KEY (notification_id)
 );
 
-CREATE TABLE User_Interests
+CREATE TABLE user_interests
 (
     user_id     BIGINT(32) NOT NULL,
     interest_id BIGINT(32) NOT NULL,

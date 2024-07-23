@@ -27,7 +27,7 @@ spring:
     static-path-pattern: /static/
 
   datasource:
-    password: '1234'
+    password: 'zxcv1234!'
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: root
     url: jdbc:mysql://127.0.0.1:3306/50pvt_db

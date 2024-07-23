@@ -124,4 +124,5 @@ public class UserService {
         return userRepository.findByMobileNumber(mobileNumber)
                 .orElseThrow(() -> new IllegalArgumentException("User not found with mobile number: " + mobileNumber));
     }
+
 }
