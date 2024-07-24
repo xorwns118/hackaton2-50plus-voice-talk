@@ -13,10 +13,14 @@ public class WebSocketConfig implements WebSocketConfigurer {
 
 
     @Autowired
-    private WebSocketHandler webSocketHandler;
+    private final CallHandler callHandler;
+
+    public WebSocketConfig(CallHandler callHandler) {
+        this.callHandler = callHandler;
+    }
 
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-        registry.addHandler(new WebSocketHandler(), "/signal").setAllowedOrigins("*");
+        registry.addHandler(callHandler, "/call").setAllowedOrigins("*");
     }
 }
