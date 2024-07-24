@@ -28,6 +28,7 @@ public class MyPageController {
      * @param httpServletRequest the http servlet request
      * @return the user info
      */
+    @CrossOrigin(origins = "http://10.230.110.50:3000")
     @GetMapping("/users/{user-id}")
     public Api<UserEntity> getUser(@PathVariable("user-id") Long userId, HttpServletRequest httpServletRequest){
         return userService.getUser(userId, httpServletRequest);
@@ -41,6 +42,7 @@ public class MyPageController {
      * @param httpServletRequest the http servlet request
      * @return the edited user info
      */
+    @CrossOrigin(origins = "http://10.230.110.50:3000")
     @PatchMapping("/users/{user-id}")
     public Api<UserEntity> editUser(@PathVariable("user-id") Long userId, @RequestBody @Valid Api<UserRequest> userRequest,
                                     HttpServletRequest httpServletRequest){

@@ -42,6 +42,7 @@ public class UserController {
      * @param httpServletRequest get httpServletRequest for session
      * @return main page
      */
+    @CrossOrigin(origins = "http://10.230.110.50:3000")
     @GetMapping("/logout")
     public String logout(HttpServletRequest httpServletRequest){
         HttpSession session = httpServletRequest.getSession();
@@ -81,7 +82,7 @@ public class UserController {
      * @return the api
      */
 //    @CrossOrigin(origins = "http://10.230.120.40:3000")
-    @CrossOrigin(origins = "http://192.168.219.102:3000")
+    @CrossOrigin(origins = "http://10.230.110.50:3000")
     @PostMapping("/logins")  // login->login.html logout->logout.html
     public Api<UserLoginRequest> loginUser(@RequestBody @Valid Api<UserLoginRequest> userLoginRequest, HttpServletRequest httpServletRequest){
         try{
@@ -110,7 +111,7 @@ public class UserController {
      * @param userRequest information got from user
      * @return user info stored at DB
      */
-    @CrossOrigin(origins = "http://192.168.219.102:3000")
+    @CrossOrigin(origins = "http://10.230.110.50:3000")
     @PostMapping("/join")
     public Api<UserRequest> joinUser(@RequestBody @Valid Api<UserRequest> userRequest) {
         return userService.join(userRequest);
