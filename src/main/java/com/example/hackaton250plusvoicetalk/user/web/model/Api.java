@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.http.HttpStatus;
 
 import java.util.List;
 
@@ -30,5 +31,13 @@ public class Api<T>{
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
     public static class Error {
         private List<String> errorMessage;
+    }
+
+    public static <T> Api<T> buildApiResponse(HttpStatus status, T data) {
+        return Api.<T>builder()
+                .data(data)
+                .resultCode(String.valueOf(status.value()))
+                .resultMessage(status.getReasonPhrase())
+                .build();
     }
 }

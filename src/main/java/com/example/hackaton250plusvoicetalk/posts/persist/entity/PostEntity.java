@@ -1,7 +1,5 @@
 package com.example.hackaton250plusvoicetalk.posts.persist.entity;
 
-
-import com.example.hackaton250plusvoicetalk.chatroom.persist.entity.ChatEntity;
 import com.example.hackaton250plusvoicetalk.common.BaseEntity;
 import com.example.hackaton250plusvoicetalk.user.persist.entity.UserEntity;
 import jakarta.persistence.*;
@@ -10,7 +8,6 @@ import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
 import java.util.List;
-
 
 @Entity(name = "posts")
 @Getter
@@ -38,10 +35,6 @@ public class PostEntity extends BaseEntity {
     // dto에 not null 추가
     @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
-
-    // dto -> entity 변환 시 default 넣어주기
-    @Column(nullable = false)
-    private Boolean chatStatus;
 
 }
 
