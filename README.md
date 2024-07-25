@@ -33,7 +33,7 @@ https://www.erdcloud.com/d/8qj45KLFqoqhm2rEu
 
 # 🪯 주요 기술 스택
 - spring boot 3.3.1
-- docker
+- docker 3.8
 - mysql 8.3.0
 - React
 
